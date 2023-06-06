@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}
+{% firstof user.vendor_shop_name product.user.get_full_name %}
+{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-bold my-3">
+    {% firstof user.vendor_shop_name product.user.get_full_name %}
+</h1>
+{% include 'partials/products.html' %}
+{% endblock %}

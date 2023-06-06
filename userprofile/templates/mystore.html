@@ -1,0 +1,398 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+My Store
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4">
+    <h1 class="text-3xl font-bold my-8">My Store</h1>
+
+    {% if messages %}
+    <div class="mb-8">
+        {% for message in messages %}
+        <div class="py-2 px-4 bg-green-100 text-pink-800 mb-4 rounded-md">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab"
+                aria-controls="orders" aria-selected="true">My Orders</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="products-tab" data-bs-toggle="tab" href="#products" role="tab"
+                aria-controls="products" aria-selected="false">My Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="add-tab" data-bs-toggle="tab" href="#add" role="tab" aria-controls="add"
+                aria-selected="false">Add Product</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="shop-tab" data-bs-toggle="tab" href="#shop" role="tab" aria-controls="shop"
+                aria-selected="false">My Shop</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+            <div id="earnings-section"
+                style="background-color: #e8ceff; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                <p style="font-size: 20px; margin-bottom: 0;"><strong>Total earnings: $</strong><span
+                        id="total-earnings" style="font-weight: bold;">{{ total_earnings }}</span></p>
+            </div>
+            {% if order_items %}
+            <div class="rounded-lg overflow-hidden shadow-lg">
+                <table id="order-items-table" class="w-full bg-white dataTables">
+                    <thead>
+                        <tr class="bg-blue-100">
+                            <th class="text-left py-3 px-4 orderable sortable">ID</th>
+                            <th class="text-left py-3 px-4 orderable sortable">Customer</th>
+                            <th class="text-left py-3 px-4 orderable sortable">Date</th>
+                            <th class="text-left py-3 px-4 orderable sortable">Status</th>
+                            <th class="text-left py-3 px-4 orderable sortable">Product</th>
+                            <th class="text-left py-3 px-4 orderable sortable">Quantity</th>
+                            <th class="text-left py-3 px-4 orderable sortable">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order_item in order_items %}
+                        <tr class="border-b border-gray-300">
+                            <td class="py-3 px-4">{{ order_item.order.id }}</td>
+                            <td class="py-3 px-4">{{ order_item.order }}</td>
+                            <td class="py-3 px-4">{{ order_item.order.created_at | date:"F d, Y" }}</td>
+                            <td class="py-3 px-4 text-purple-600" data-sort="{{ order_item.order.payment_status }}">
+                                {% if order_item.order.payment_status == 'P' %}
+                                <span class="text-purple-600">Pending</span>
+                                {% elif order_item.order.payment_status == 'C' %}
+                                <span class="text-green-600">Complete</span>
+                                {% elif order_item.order.payment_status == 'F' %}
+                                <span class="text-red-600">Failed</span>
+                                {% else %}
+                                {{ order_item.order.payment_status }}
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4">{{ order_item.product.title }}</td>
+                            <td class="py-3 px-4">{{ order_item.quantity }}</td>
+                            <td class="py-3 px-4 font-medium text-green-600">${{ order_item.unit_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="my-8 text-center text-gray-600">You don't have any orders yet.</p>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="products-tab">
+            <form method="get">
+                {% csrf_token %}
+                <div class="flex justify-between items-center mb-4 filters-section bg-gray-200 py-4 px-6">
+                    <div class="w-1/4">
+                        {% if product_filter.form.title.value %}
+                        <input type="search" placeholder="Title" name="{{ product_filter.form.title.name }}"
+                            value="{{ product_filter.form.title.value }}"
+                            class="form-control rounded-full border-2 border-gray-300">
+                        </input>
+                        {% else %}
+                        <input type="search" placeholder="Title" name="{{ product_filter.form.title.name }}"
+                            class="form-control rounded-full border-2 border-gray-300">
+                        </input>
+                        {% endif %}
+                    </div>
+                    <div class="w-1/4">
+                        <select name="{{ product_filter.form.status.name }}"
+                            class="form-control rounded-full border-2 border-gray-300">
+                            <option value="">{{ "Status" }}</option>
+                            {% for status in product_filter.form.status.field.choices %}
+                            {% if product_filter.form.status.value.0|stringformat:"s" == status.0|stringformat:"s" %}
+                            <option value="{{ status.0 }}" selected>{{ status.1 }}</option>
+                            {% else %}
+                            <option value="{{ status.0 }}">{{ status.1 }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="w-1/4">
+                        <select name="{{ product_filter.form.unit_price.name }}"
+                            class="form-control rounded-full border-2 border-gray-300">
+                            {% for unit_price in product_filter.form.unit_price.field.choices %}
+                            {% with val=product_filter.form.unit_price.value.0|stringformat:"s" %}
+                            {% if val == unit_price.0|stringformat:"s" %}
+                            <option value="{{ unit_price.0 }}" selected>{{ unit_price.1 }}</option>
+                            {% else %}
+                            <option value="{{ unit_price.0 }}">{{ unit_price.1 }}</option>
+                            {% endif %}
+                            {% endwith %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="w-1/4">
+                        <select name="sort_by" class="form-control rounded-full border-2 border-gray-300">
+                            {% for sort_choice in product_filter.SORT_CHOICES %}
+                            {% if request.GET.sort_by|stringformat:"s" == sort_choice.0|stringformat:"s" %}
+                            <option value="{{ sort_choice.0 }}" selected>{{ sort_choice.1 }}</option>
+                            {% else %}
+                            <option value="{{ sort_choice.0 }}">{{ sort_choice.1 }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mx-2">
+                        <button type="submit"
+                            class="filter-button bg-gray-400 hover:bg-gray-600 text-black font-bold py-1 px-2 rounded-full">
+                            <i class="fas fa-filter text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class="text-center mb-4">
+                <p>{{ product_count }} results found</p>
+            </div>
+            {% if products %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {% for product in products %}
+                <div
+                    class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300 flex flex-col justify-between">
+                    <a href="{% url 'edit_product' product.id %}">
+                        {% if product.productimages.all %}
+                        {% for product_image in product.productimages.all %}
+                        <img class="h-64 w-full object-cover object-center" src="{{ product_image.get_thumbnail }}"
+                            alt="image of {{ product.title }}">
+                        {% endfor %}
+                        {% else %}
+                        <img class="h-64 w-full object-cover object-center"
+                            src="/media/uploads/product_images/default-image.jpg" alt="default image">
+                        {% endif %}
+                    </a>
+                    <div class="p-4">
+                        <a href="{% url 'edit_product' product.id %}">
+                            <h3 class="text-gray-900 font-bold text-xl mb-2 hover:text-blue-800">{{ product.title }}
+                            </h3>
+                        </a>
+                        <div class="flex items-center mt-2 my-2">
+                            <span class="text-gray-900 font-bold text-lg">${{ product.unit_price }}</span>
+                        </div>
+                        <hr class="my-3">
+                        <p class="mt-2 text-sm">
+                            <strong>Status:</strong> {{ product.get_status_display }}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="my-8 text-center text-gray-600">You don't have any products yet.</p>
+            {% endif %}
+            {% if products.has_other_pages %}
+            {% include 'custom_pagination.html' with page_obj=products %}
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="add" role="tabpanel" aria-labelledby="add-tab">
+            <div class="mb-8">
+                <a href="{% url 'add_product' %}" class="btn btn-primary rounded-pill py-2 px-4">
+                    Add Product</a>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="shop" role="tabpanel" aria-labelledby="shop-tab">
+            <form method="post" action="." enctype="multipart/form-data"
+                class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2" for="{{ form.shop_name.id_for_label }}">
+                    </label>
+                    {{ form.shop_name|as_crispy_field }}
+                </div>
+                <div>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<style>
+    /* Custom styles for the tabs */
+    .nav-tabs {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-bottom: 2px solid #ddd;
+    }
+
+    .nav-tabs .nav-item {
+        margin-bottom: -2px;
+    }
+
+    .nav-tabs .nav-link {
+        border: none;
+        background-color: transparent;
+        color: #333;
+        font-weight: bold;
+        padding: 10px 20px;
+        margin-right: 10px;
+        border-radius: 5px 5px 0 0;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .nav-tabs .nav-link.active,
+    .nav-tabs .nav-link:hover {
+        background-color: #f1f3f5;
+    }
+
+    .nav-tabs .nav-link.active {
+        border-bottom-color: #007bff;
+        color: #007bff;
+        background-color: #fff;
+    }
+
+    .nav-tabs .nav-link.active:hover {
+        background-color: #fff;
+    }
+
+    .dataTables_wrapper {
+        margin-top: 1rem;
+        margin-right: 1rem;
+        margin-left: 1rem;
+    }
+
+    .dataTables_wrapper .dataTables_length {
+        float: right;
+    }
+
+    .dataTables_wrapper .dataTables_filter {
+        float: left;
+        margin-right: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        display: flex;
+        align-items: center;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        padding: 0.3rem;
+        width: 360px;
+    }
+
+    .dataTables_wrapper .dataTables_info {
+        padding: 0.5rem;
+        margin-left: 0.5rem;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        padding: 0.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.5rem;
+        margin-right: 0.25rem;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f8f9fa;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .ellipsis.disabled,
+    .dataTables_wrapper .dataTables_paginate .disabled a {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .ellipsis:hover,
+    .dataTables_wrapper .dataTables_paginate .disabled a:hover {
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .first,
+    .dataTables_wrapper .dataTables_paginate .last,
+    .dataTables_wrapper .dataTables_paginate .previous,
+    .dataTables_wrapper .dataTables_paginate .next {
+        padding: 0.5rem;
+        margin-right: 0.25rem;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f8f9fa;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .first:hover,
+    .dataTables_wrapper .dataTables_paginate .last:hover,
+    .dataTables_wrapper .dataTables_paginate .previous:hover,
+    .dataTables_wrapper .dataTables_paginate .next:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .disabled.first,
+    .dataTables_wrapper .dataTables_paginate .disabled.last,
+    .dataTables_wrapper .dataTables_paginate .disabled.previous,
+    .dataTables_wrapper .dataTables_paginate .disabled.next {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .dataTables_wrapper table.dataTable.no-footer {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .dataTables_wrapper table.dataTable tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    .dataTables_wrapper table.dataTable tbody tr:hover {
+        background-color: #f1f3f5;
+    }
+</style>
+
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+<script>
+    const tab = new bootstrap.Tab(document.getElementById('myTab'));
+
+    $(document).ready(function () {
+        var lastActiveTab = localStorage.getItem('lastActiveTab');
+
+        if (lastActiveTab) {
+            $('.nav-tabs a[href="' + lastActiveTab + '"]').tab('show');
+        }
+
+        $('.nav-tabs a').on('shown.bs.tab', function (event) {
+            var activeTab = $(event.target).attr('href');
+            localStorage.setItem('lastActiveTab', activeTab);
+        });
+    });
+
+    tab.show();
+
+    $(document).ready(function () {
+        $('#order-items-table').DataTable({
+            "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            "pageLength": 5
+        });
+    });
+</script>
+{% endblock %}

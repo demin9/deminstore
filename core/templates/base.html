@@ -1,0 +1,412 @@
+{% load menu %}
+{% load widget_tweaks %}
+{% load static %}
+
+<!doctype html>
+<html>
+
+<head>
+    <title>{% block title %}{% endblock %} | MyWebsite</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    {% block meta %}{% endblock %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6nLg2m6H0pXB1Pr5E9giX6XTsUfQUFB8pNcZI5" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <style>
+        form label.required:after {
+            content: " *";
+            color: red;
+        }
+
+        /* Header styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header__logo img {
+            height: 50px;
+        }
+
+        .header__search {
+            display: flex;
+            align-items: center;
+        }
+
+        .header__search input {
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .header__search button {
+            background-color: #FF5A5F;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .header__menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header__menu a {
+            color: black;
+            text-decoration: none;
+        }
+
+        .footer {
+            background-color: #f8f8f8;
+            padding: 40px 0;
+            font-family: Arial, sans-serif;
+            margin-top: 40px;
+        }
+
+        .footer__logo {
+            width: 200px;
+            height: auto;
+        }
+
+        .footer__title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .footer__description {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        .footer__menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer__menu li {
+            margin-bottom: 8px;
+        }
+
+        .footer__menu a {
+            color: #333;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer__menu a:hover {
+            color: #ff3366;
+        }
+
+
+        .footer__social {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer__social li {
+            margin-right: 12px;
+        }
+
+        .footer__social a {
+            font-size: 20px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer__copy {
+            font-size: 12px;
+            color: #777;
+            margin-top: 20px;
+        }
+
+
+        .tooltip {
+            background-color: black;
+            font-size: 16px;
+        }
+
+        .tooltip .tooltip-inner {
+            color: white;
+        }
+
+        .nav-link:hover .fa-user {
+            color: #007bff;
+        }
+
+        .breadcrumb {
+            background-color: #f8f9fa;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+
+        .breadcrumb ol {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .breadcrumb li {
+            display: inline-block;
+        }
+
+        .breadcrumb li:not(:last-child):after {
+            margin: 0 8px;
+            color: #777;
+        }
+
+        .breadcrumb li a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .breadcrumb li a:hover {
+            color: #007bff;
+        }
+
+        .breadcrumb .active {
+            color: #777;
+        }
+
+        .breadcrumb .active:not(:last-child):after {
+            content: "";
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container-fluid bg-white py-3">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <a href="/">
+                        <img src="{% static 'custom/logo/Logo4.png' %}" alt="Demin Store" height="50">
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <form method="get" action="/search/" class="d-flex">
+                        <div class="input-group">
+                            <input class="form-control" name="query" type="search" placeholder="Search for products..."
+                                aria-label="Search">
+                            <button class="btn btn-outline-success" type="submit"><i class="fa fa-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <ul class="nav justify-content-end">
+                        {% if request.user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a href="{% url 'myaccount' %}" class="nav-link dropdown-toggle" href="#"
+                                id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                <i class="fa fa-user" title="Sign in" data-toggle="tooltip" data-placement="top"></i>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'myprofile' %}">
+                                    <div style="display: flex; align-items: center;">
+                                        <i class="fa fa-user-circle fa-lg mr-2" aria-hidden="true"></i>
+                                        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                            <span
+                                                style="font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; margin-bottom: 0;">
+                                                {{ user.get_full_name|default:user.username }}</span>
+                                            <span
+                                                style="font-family: Arial, sans-serif; font-size: 14px; margin-top: 0;">
+                                                View your profile</span>
+                                        </div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item" href="{% url 'myorders' %}">
+                                    <div style="display: flex; align-items: center;">
+                                        <i class="fa fa-shopping-bag mr-2" aria-hidden="true"></i>
+                                        <span style="font-family: Arial, sans-serif; font-size: 14px;">My orders</span>
+                                    </div>
+                                </a>
+                                {% if not request.user.userprofile.is_vendor %}
+                                <a class="dropdown-item" href="{% url 'vendor' %}">
+                                    <div style="display: flex; align-items: center;">
+                                        <i class="fa fa-store mr-2" aria-hidden="true"></i>
+                                        <span style="font-family: Arial, sans-serif; font-size: 14px;">Sell on
+                                            Demin Store</span>
+                                    </div>
+                                </a>
+                                {% endif %}
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'logout' %}">
+                                    <div style="display: flex; align-items: center;">
+                                        <i class="fas fa-sign-out-alt fa-lg mr-2" aria-hidden="true"></i>
+                                        <span style="font-family: Arial, sans-serif; font-size: 14px;">Sign out</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'myaccount' %}" class="nav-link text-dark">
+                                <i class="fa fa-user" title="Sign in" data-toggle="tooltip" data-placement="top"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if request.user.is_authenticated and request.user.userprofile.is_vendor%}
+                        <li class="nav-item">
+                            <a href="{% url 'mystore' %}" class="nav-link text-dark">
+                                <i class="fa fa-store" title="My store" data-toggle="tooltip" data-placement="top"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a href="{% url 'cart' %}" class="nav-link text-dark position-relative">
+                                <i class="fa fa-shopping-cart" title="Cart" data-toggle="tooltip"
+                                    data-placement="top"></i>
+                                {% if cart_count > 0 %}
+                                <span
+                                    class="badge rounded-circle bg-orange-400 text-dark position-absolute top-0 start-100 translate-middle">
+                                    {{ cart_count }}
+                                    <span class="visually-hidden">items in cart</span>
+                                </span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'about' %}" class="nav-link text-dark">
+                                <i class="fas fa-info" title="About" data-toggle="tooltip" data-placement="top"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% menu %}
+            <ul class="breadcrumb">
+                <nav aria-label="Breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        {% for breadcrumb in breadcrumbs %}
+                        {% if forloop.last %}
+                        <li class="breadcrumb-item active">{{ breadcrumb.label }}</li>
+                        {% else %}
+                        <li class="breadcrumb-item"><a href="{{ breadcrumb.url }}">{{ breadcrumb.label }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ol>
+                </nav>
+            </ul>
+        </div>
+    </header>
+    <div class="max-w-4xl mx-auto py-4 px-6">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center background-color mb-4">
+                    <a href="#top" class="back-to-top">Back to Top</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <a href="/"><img src="{% static 'custom/logo/Logo1.png' %}" alt="Logo"
+                            class="footer__logo mb-4"></a>
+                </div>
+                <div class="col-md-5">
+                    <h5 class="footer__title">Customer Service</h5>
+                    <ul class="footer__menu">
+                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="footer__title">Follow Us</h5>
+                    <ul class="footer__social">
+                        <li><a href="https://www.facebook.com/mahsa.kamali1/" class="text-blue-700 hover:text-blue-800"
+                                target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                        <li><a href="https://www.instagram.com/mahsa.kamalia/" class="text-pink-600 hover:text-pink-800"
+                                target="_blank"><i class="fab fa-instagram"></i></a></li>
+                        <li><a href="https://www.linkedin.com/in/mahsa-kamalianaraki/"
+                                class="text-blue-600 hover:text-blue-800" target="_blank"><i
+                                    class="fab fa-linkedin"></i></a></li>
+                        <li><a href="https://wa.me/+593963969469" class="text-green-600 hover:text-green-800"
+                                target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        </li>
+                        <li><a href="https://telegram.me/Kamali_Mahsa" class="text-blue-500 hover:text-blue-800"
+                                target="_blank"><i class="fab fa-telegram"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row text-center">
+                <p class="footer__copy">© 2023 Demin Store. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip({
+                template: '<div class="tooltip" role="tooltip"><div class="tooltip-inner"></div></div>'
+            });
+        });
+        $(document).ready(function () {
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 100) {
+                    $('.back-to-top').fadeIn();
+                } else {
+                    $('.back-to-top').fadeOut();
+                }
+            });
+
+            $('.back-to-top').click(function () {
+                $('html, body').animate({ scrollTop: 0 }, 800);
+                return false;
+            });
+        });
+    </script>
+    {% block script %}
+    {% endblock %}
+</body>
+
+</html>

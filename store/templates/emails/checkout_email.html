@@ -1,0 +1,35 @@
+{% block subject %}
+Thanks for your shopping in DeminStore!
+{% endblock %}
+{% block text_body %}
+{% endblock %}
+{% block html_body %}
+<h1 class="text-2xl font-bold mb-4">Thank you, {{ customer }}!</h1>
+<p class="text-gray-600">Your order has been successfully placed.</p>
+<div class="order-summary bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <h2 class="text-2xl mb-4 font-bold">Order Summary</h2>
+    <div id="order_summary_items">
+        <table class="w-full text-sm mb-3">
+            <thead class="border-b border-gray-300">
+                <tr>
+                    <th class="py-3">Item</th>
+                    <th class="py-3 text-center">Quantity</th>
+                    <th class="py-3 text-right pr-4">Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart %}
+                <tr class="border-b border-gray-300">
+                    <td class="py-3">{{ item.title }}</td>
+                    <td class="py-3 text-center">{{ item.quantity }}</td>
+                    <td class="py-3 text-right pr-4">${{ item.unit_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div id="order_summary_total" class="text-lg font-bold text-right">
+        Total: ${{ total_cost }}
+    </div>
+</div>
+{% endblock %}

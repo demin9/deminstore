@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{{ product.title }}
+{% endblock %}
+
+{% block meta %}
+<meta name="description" content="{{ product.description }}">
+<meta name="author" content="Demin Store">
+<meta property="og:title" content="Demin Store | {{ product.title }}">
+<meta property="og:description" content="{{ product.description }}">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://deminstore.com{% url 'product_detail' product.id %}">
+{% if product.image %}
+<meta property="og:image" content="http://deminstore.com{{ product.image.url }}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 5%;
+        z-index: 10;
+    }
+
+    .carousel-control-prev-icon::before {
+        content: '\f060';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        font-size: 25px;
+        color: black;
+    }
+
+    .carousel-control-next-icon::before {
+        content: '\f061';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        font-size: 25px;
+        color: black;
+    }
+
+    .carousel-thumbnails {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .carousel-thumbnails img {
+        max-width: 60px;
+        height: auto;
+        opacity: 0.75;
+        cursor: pointer;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .carousel-thumbnails .active img {
+        opacity: 1;
+    }
+
+    .carousel-thumbnails img {
+        margin-bottom: 10px;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="d-flex">
+                <div class="carousel-thumbnails">
+                    {% if product.productimages.all %}
+                    {% for product_image in product.productimages.all %}
+                    {% if product_image.default %}
+                    <img src="{{ product_image.image.url }}" alt="thumbnail of {{ product.title }}"
+                        class="img-fluid rounded mb-4 active" style="opacity: 1;">
+                    {% else %}
+                    <img src="{{ product_image.image.url }}" alt="thumbnail of {{ product.title }}"
+                        class="img-fluid rounded mb-4">
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    <img class="img-fluid rounded mb-4" src="/media/uploads/product_images/default-image.jpg"
+                        alt="default image">
+                    {% endif %}
+                </div>
+                <div id="product-images" class="carousel slide ml-4" data-ride="carousel" data-interval="false">
+                    <div class="carousel-inner">
+                        {% if product.productimages.all %}
+                        {% for product_image in product.productimages.all %}
+                        {% if product_image.default %}
+                        <div class="carousel-item active">
+                            <img src="{{ product_image.image.url }}" alt="image of {{ product.title }}"
+                                class="img-fluid rounded mb-4">
+                        </div>
+                        {% else %}
+                        <div class="carousel-item">
+                            <img src="{{ product_image.image.url }}" alt="image of {{ product.title }}"
+                                class="img-fluid rounded mb-4">
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <img class="img-fluid rounded mb-4" src="/media/uploads/product_images/default-image.jpg"
+                            alt="default image">
+                        {% endif %}
+                    </div>
+                    <a class="carousel-control-prev" href="#product-images" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#product-images" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h1 class="fw-bold text-2xl">{{ product.title }}</h1>
+            <p class="text-muted mb-2">
+                ${{ product.unit_price }}
+                -
+                <a href="{% url 'vendor_detail' product.user.id %}" class="text-decoration-none">
+                    {% firstof product.vendor_shop_name product.user.get_full_name %}
+                </a>
+            </p>
+            {% if product.description %}
+            <p class="lead my-4">{{ product.description }}</p>
+            {% endif %}
+            <div class="mt-2 my-2 mb-2">
+                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary rounded-pill py-2 px-10">
+                    <i class="fas fa-shopping-cart"></i> Add to cart</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        {% if reviews %}
+        <h2 class="text-2xl text-left mb-2">{{ reviews.count }} Reviews</h2>
+        {% endif %}
+        {% for review in reviews %}
+        <div class="bg-white shadow-md border rounded-lg p-2 my-2">
+            <p class="text-lg mb-2 mx-2">{{ review.description }}</p>
+            <p>
+                <span class="text-gray-800 text-sm mx-2">{{ review.name }}</span>
+                <span class="text-gray-600 text-sm" style="font-size: 12px;">{{ review.date }}</span>
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <form id="review_form" name="review_form" method="post" action="." enctype="multipart/form-data"
+            class="bg-white shadow-md rounded-lg p-6 mb-4">
+            {% csrf_token %}
+            <h2 class="text-2xl text-left mb-4">Leave a Review</h2>
+            <div class="mb-4">
+                {{ review_form|crispy }}
+            </div>
+            <div class="flex justify-left">
+                <button id="review_form_submit" name="review_form_submit" type="submit"
+                    class="bg-blue-500 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#product-images').carousel({
+            interval: false
+        });
+
+        $('#product-images').on('slide.bs.carousel', function (e) {
+            var index = $(e.relatedTarget).index();
+            $('.carousel-thumbnails img').removeClass('active');
+            $('.carousel-thumbnails img').eq(index).addClass('active');
+        });
+
+        $('.carousel-thumbnails img').click(function () {
+            var index = $(this).index();
+            $('#product-images').carousel(index);
+            $('.carousel-thumbnails img').removeClass('active');
+            $(this).addClass('active');
+            $('.carousel-thumbnails img').css('opacity', '0.75');
+            $('.carousel-thumbnails img.active').css('opacity', '1');
+        });
+    });
+</script>
+{% endblock %}

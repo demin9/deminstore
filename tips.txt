@@ -1,0 +1,319 @@
+    0. Create a new project
+        cd Projects/python
+        mkdir DeminStore
+        cd DeminStore
+        code .
+    1. Create virtual env 
+        pipenv install -> create a virtual env
+        pipenv shell  -> activate virtual env
+        pipenv --venv  (to see the path of the virtual env)
+        Command Palette/Select Interpreter
+    2. Install Django
+        pipenv install django
+    3. Create empty project
+        django-admin startproject petnet .        
+    4. Init database
+        Add these 3 lines to __init__.py in deminstore
+        import pymysql
+        pymysql.version_info = (2, 1, 1, 'final', 0)
+        pymysql.install_as_MySQLdb()
+
+        CREATE DATABASE deminstore (run in mysql)
+        settings.py DATABASE
+        python manage.py makemigrations
+        python manage.py migrate
+    5. Create Superuser
+        python manage.py createsuperuser
+    6. Test run
+        python manage.py runserver
+    7. Create core app for base pages (front page, contact page, ...)
+        python manage.py startapp core 
+        settings.py/INSTALLED_APPS
+        views.py (added a function to show an html page)
+        urls.py  (added the url of the function)
+        templates/(add an html file here)
+    8. Create app for userprofiles
+        python manage.py startapp userprofile
+        settings.py/INSTALLED_APPS
+        models.py (Create a class for userprofile)
+        python manage.py makemigrations
+        python manage.py migrate
+        admin.py (Register the class here)
+    9. Create app for products
+        python manage.py startapp store
+        settings.py/INSTALLED_APPS
+        models.py (Create a class for store)
+        python manage.py makemigrations
+        python manage.py migrate
+        admin.py (Register the class here)
+    10. Add category model
+        models.py (Add a class for category and product)
+        python manage.py makemigrations
+        python manage.py migrate
+        admin.py (Register the class here)
+    11. List out newest products on the front page
+        views.py (Add queryset)
+        frontpage.html (Show the result)
+    12. Add product detail view
+        templates/store/product_detail.html
+        store/view.py (add a render function for product_detail)
+        store/urls.py
+    13. Category view
+        templatetags/menu.py
+        base.html add {% load menu %}
+        menu.html
+        store/view.py (add category_detail function)
+        category_detail.html
+        store/urls.py
+    14. Show vendor on product detail page
+        product_detail.html
+    15. Add images to the product
+        pipenv install pillow
+        store/models.py (add image field)
+        python manage.py makemigrations
+        python manage.py migrate
+        settings.py (add media_url and media_root)
+        add media directory to the root folder
+        petnet/urls.py (add static settings)
+        frontpage.html product_detail.html category_detail.html (show image)
+    16. Vendor detail page
+        userprofile/view.py (add vendor_detail method)
+        userprofile/templates/vendor_detail.html
+        userprofile/urls.py
+        petnet/urls.py
+    17. Sign up, sign in, sign out
+        userprofile/view.py (add signup method)
+        userprofile/view.py (add myaccount method)
+        userprofile/urls.py
+        userprofile/templates/signup.html
+    18. Create my account page
+        userprofile/templates/myaccount.html
+    19. Simple search
+        base.html (add search textbox)
+        store/view.py (add search function)
+        search.html
+    20. Admin pages for the vendors
+        base.html (add my store)
+        userprofile/view.py (add my_store function)
+        store/forms.py (add Class ProductForm)
+        userprofile/view.py (add add_product function)
+        userprofile/urls.py
+        userprofile/templates/add_product.html
+        userprofile/view.py (add edit_product function)
+        userprofile/urls.py
+        userprofile/view.py (add delete_product function)
+        Add status field to Product model
+    21. Add product to the cart
+        store/cart.py (add Cart class)
+        store/view.py (add add_to_cart function)
+        store/urls.py 
+        store/templates/product_detail (add add to cart button)
+    22. View cart
+        store/view.py (add cart_view function)
+        store/urls.py 
+        store/templates/cart_view.html
+        store/view.py (add remove_from_cart function)
+        store/urls.py 
+    23. Add thumbnails for the images
+        Add thumbnail field to Product model
+        make_thumbnail
+        get_thumbnail
+    24. Create a Checkout page
+        store/models.py (Add class Order and OrderItem)
+        makemigrations
+        migrate
+        admin.py (Register the class here)
+        store/forms.py (add Class OrderForm)
+    25. Seperate shoppers from vendors
+        userprofile model (Add is_vendor field)
+        makemigrations
+        migrate
+    26. Checkout functionality
+        context_processors.py to show the number of items in the cart
+    27. Vendors must be able to see their orders
+        Add order_items to mystore function
+    28. Implement payment gateway
+        a. Get api keys from stripe
+            Create a new account in Stipe
+        b. Install stripe and add credentials in settings.py
+            pip install stripe
+            copy the api key and secret key, paste in settings.py
+        c. Pass the pub key into the checkout view
+            add pub_key to checkout function in store/views.py
+        d. Create stripe checkout when creating order
+            add buy function and stipe functionality to the checkout function
+        e. Create success page
+            add cart/success/ to urls.py
+            add success function to views.py
+            add success.html page
+    29. Add validation to the checkout form
+    29. Vendors must be able to see what they have earned
+        Add total_earnings to mystore
+    30. Add requirements file
+        pip freeze > requirements.txt 
+    31. Add a robot page to the project
+    32. Add project to Git
+        a. git init (Initialize a git repository in this project, repository is 
+        like a database that holds snapshots of our project, as we code, as we make 
+        changes, we take snapshots and store them in this repository )
+        b. git add . (It will add all the modified files in a staging area, so they are
+        ready for commiting to git)
+        c. git commit -m "Initial commit" (We create a snapshot of our project and store
+        it in our git repository)
+        d. git log --oneline (To see all the commits we have made so far)
+        git branch -M main
+        git remote add origin https://github.com/demin9/deminstore.git
+        git push -u origin main
+        git remote -v
+
+        To push new changes to git:
+        git status
+        git add .
+        git commit -m "Updated files with new features"
+        git push origin main
+
+    33. Deploy project
+        git clone https://github.com/demin9/deminstore.git
+        a. Create a server
+        b. Install and update software
+        c. Set up the environment
+        d. Get code from Git       
+        e. Initialize database
+        f. Set up gunicorn
+        g. Set up supervisor
+        h. Set up nginx
+
+If a port is already in use:
+    sudo lsof -t -i tcp:8000 | xargs kill -9   
+
+To copy a database into another database, run in terminal:
+    mysqldump -u root -p deminstore > dump.sql
+    mysql -u root -p petnet < dump.sql
+
+To install redis:
+    1. docker run -d -p 6379:6379 redis
+    2. pipenv install redis  
+
+Running background tasks:
+    1. pipenv install celery 
+    2. add celery.py to petnet or deminstore
+    3. add CELERY_BROKER_URL to settings
+    4. import it in __init__ in deminstore
+    5. celery -A deminstore worker --loglevel=info
+    6. add tasks.py
+
+Scheduled celery tasks:
+    celery beat
+
+Monitoring celery tasks:
+    1. pipenv install flower
+    2. celery -A deminstore flower
+    3. http://localhost:5555/
+
+Automated tests:
+    Test Frameworks:
+        1. unittest (Built in python)
+        2. pytest (should be installed seperately)
+    Every test should have three parts (AAA):
+        1. Arrange: Prepare system on the test, we create object or we put our
+            database in an initial state or so on
+        2. Act: We kick off the behavior we wanna test, sending a request to
+            the server
+        3. Assert: this is where we check to see if the behavior we expect happens
+            or not.
+    1. pipenv install --dev pytest
+    2. pipenv install --dev pytest-django
+    3. store/tests/test_categories.py
+    4. add pytest.ini to the root
+    
+For continues testing: 
+    1. pipenv install --dev pytest-watch
+    2. ptw (run this in terminal)
+
+
+Django API:
+    1. pipenv install djangorestframework
+    2. Add it to the INSTALLED_APPS
+    3. Create a serializer
+    4. Create a view
+    5. Register a route
+    
+Authentication for API:
+    1. pipenv install djoser
+    2. pipenv install djangorestframework_simplejwt (Authentication backends has
+       two approaches, one is Token-based Authentication with django, but it saves 
+       the token in a database, the second one is Jason Web Token Authentication,
+       every token has a digital signature and on the validation is done on the server)
+
+
+For Perfomance Testing:
+    1. pipenv install --dev locust
+    2. locust -f locustfiles/browser_products.py (to run the test)
+
+    Optimizations:
+    1. Optimize the python code:
+        Solutions:
+        1. Preload related objects
+            Product.objects.select_related('...')
+            Product.objects.prefetch_related('...')
+        2. Load only what you need
+            Product.objects.only('title')
+            Product.objects.defer('description') --> oposite of only
+        3. Use values
+            Product.objects.values() --> returns a dictionary
+            Product.objects.values_list() --> returns a List
+            (Initializing a python dictionary or list is cheeper than Initializing
+            a django model. So if you do not need any behavior of a django model
+            like creating, updating, deleting, then you can optimize by using one
+            of these methods.)
+        4. Count properly
+            Product.objects.count()
+            len(Product.objects.all()) #BAD#
+        5. Bulk create/update
+            Product.objects.bulk_create([])
+    2. Re-write the queryset
+    3. Tune the database
+    4. Cache the result
+    5. Buy more hardware
+
+    Profiling with Silk:
+    1. pipenv install --dev django-silk
+
+Cache Backends:
+    1. Local memory(default) -> good for development but bad for production
+    2. Memcached 
+    3. Redis
+    4. Database
+    5. File system
+
+Configuring Caching with Redis:
+    1.  pipenv install django-redis 
+    2. for function-based views -> @cache_page(5 * 60) (decorator)
+    3. for class_based views -> @method_decorator(cache_page(5 * 60))
+
+Static:
+    1. Collecting static files: python manage.py collectstatic
+    2. Serving static files: pipenv install whitenoise
+    
+Configuring Logging:
+    1. Add logging to settings
+
+    Logging Level Severity:
+        1. Debug
+        2. Info
+        3. Warning
+        4. Error
+        5. Critical
+
+Serving the application with Gunicorn (for production)
+    1. pipenv install gunicorn
+    2. gunicorn deminstore.wsgi
+    WSGI.py (Web Server Gateway Interface)
+
+Hosting options:
+    1. Virtual Private Server (VPS)
+    2. Platform-as-a-Service (PaaS)
+        a. Heroku
+        b. Digital Ocean
+        c. MS Azure
+        d. Google Cloud

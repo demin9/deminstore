@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Checkout
+{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl text-center">{{ Checkout }}</h1>
+<div class="grid grid-cols-1 md:grid-cols-5 gap-4 mx-auto">
+    <div class="md:col-span-3">
+        {% if show_customer_form %}
+        <form id="customer_form" name="customer_form" method="post" action="." enctype="multipart/form-data"
+            class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            {% csrf_token %}
+            <h2 class="text-2xl text-center mb-4">Delivery Information</h2>
+            <div class="mb-4">
+                {{ customer_form|crispy }}
+            </div>
+            <div>
+                <button id="customer_form_submit" name="customer_form_submit" type="submit"
+                    class="bg-blue-500 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded">
+                    Next
+                </button>
+            </div>
+        </form>
+        {% endif %}
+        {% if show_address_form %}
+        <form id="address_form" name="address_form" method="post" action="." enctype="multipart/form-data"
+            class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            {% csrf_token %}
+            <h2 class="text-2xl text-center mb-4">Delivery Information</h2>
+            <div class="mb-4">
+                {{ address_form|crispy }}
+            </div>
+            <div>
+                <button id="address_form_submit" name="address_form_submit" type="submit"
+                    class="bg-blue-500 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded">
+                    Next
+                </button>
+            </div>
+        </form>
+        {% endif %}
+        {% if show_summary_form %}
+        <h2 class="text-3xl text-center font-bold mb-8">Delivery Details</h2>
+        <div class="bg-white p-8 rounded-md shadow-lg">
+            <div class="flex flex-col sm:flex-row py-4">
+                <div class="sm:w-1/2 px-4">
+                    <h2 class="text-lg font-bold mb-4">Shipping Address</h2>
+                    <p class="text-gray-800 font-semibold">{{ address.customer }}</p>
+                    <p class="text-gray-800">{{ address }}</p>
+                    <p class="text-gray-800">{{ address.customer.phone }}</p>
+                    <p class="text-gray-800">{{ address.customer.user.email }}</p>
+                </div>
+            </div>
+            <div class="flex justify-end mt-8">
+                <button id="summary_form_submit" name="summary_form_submit" onclick="buy(event)"
+                    class="bg-blue-500 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-lg shadow-md">
+                    Proceed to Payment
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="md:col-span-2">
+        <div class="order-summary bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h2 class="text-2xl mb-4 font-bold">Order Summary</h2>
+            <div id="order_summary_items">
+                <table class="w-full text-sm mb-3">
+                    <thead class="border-b border-gray-300">
+                        <tr>
+                            <th class="py-3">Item</th>
+                            <th class="py-3 text-center">Quantity</th>
+                            <th class="py-3 text-right pr-4">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart %}
+                        <tr class="border-b border-gray-300">
+                            <td class="py-3">{{ item.title }}</td>
+                            <td class="py-3 text-center">{{ item.quantity }}</td>
+                            <td class="py-3 text-right pr-4">${{ item.unit_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="order_summary_total" class="text-lg font-bold text-right">
+                Total: ${{ total_cost }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script type="application/javascript" src="https://js.stripe.com/v3"></script>
+<script>
+    function buy(event) {
+        event.preventDefault();
+
+        let data = {
+            'first_name': '{{ address.customer.user.first_name }}',
+            'last_name': '{{ address.customer.user.last_name }}',
+            'address': '{{ address.customer.address }}'
+        }
+        var stripe = Stripe('{{ pub_key }}');
+        fetch('/cart/checkout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify(data)
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (session) {
+                return stripe.redirectToCheckout({ sessionId: session.session.id })
+            })
+            .then(function (result) {
+                if (result.error) {
+                    alert(result.error.message)
+                }
+            })
+            .catch(function (error) {
+                alert(error)
+            });
+
+        return false;
+    }
+</script>
+{% endblock %}

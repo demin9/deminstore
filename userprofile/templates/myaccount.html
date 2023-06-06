@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<h1 class="text-2xl my-3">Log in</h1>
+<div class="flex justify-center items-center bg-gray-100 py-8">
+    <div class="grid grid-cols-2 gap-6">
+        <div class="bg-white rounded-lg shadow-lg px-6 py-8">
+            <h1 class="text-2xl font-bold mb-8 text-center">Login</h1>
+            <form method="post" action="." class="w-full">
+                {% csrf_token %}
+                <div class="mb-4">
+                    {{ login_form|crispy }}
+                </div>
+                <div class="flex justify-center items-center">
+                    <input type="hidden" name="next" value="{{ next_url }}">
+                    <button id="login_form_submit" name="login_form_submit"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                        Login
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg px-6 py-8">
+            <h1 class="text-2xl font-bold mb-8 text-center">Sign up</h1>
+            <form method="post" action="." class="w-full">
+                {% csrf_token %}
+                <div class="mb-4">
+                    {{ signup_form|crispy }}
+                </div>
+                <div class="flex justify-center items-center">
+                    <input type="hidden" name="next" value="{{ next_url }}">
+                    <button id="signup_form_submit" name="signup_form_submit"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                        Sign up
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+<div class="pagination">
+    {% if page_obj.has_previous %}
+    <a href="?{{ request.GET.urlencode }}&page=1"><i class="fas fa-angle-double-left"></i></a>
+    <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}"><i
+            class="fas fa-angle-left"></i></a>
+    {% endif %}
+
+    {% for i in page_obj.paginator.page_range %}
+    {% if page_obj.number == i %}
+    <span class="current-page">{{ i }}</span>
+    {% else %}
+    <a href="?{{ request.GET.urlencode }}&page={{ i }}">{{ i }}</a>
+    {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}"><i class="fas fa-angle-right"></i></a>
+    <a href="?{{ request.GET.urlencode }}&page={{ page_obj.paginator.num_pages }}"><i
+            class="fas fa-angle-double-right"></i></a>
+    {% endif %}
+</div>
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1rem;
+    }
+
+    .pagination a,
+    .pagination span {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        color: black;
+        margin: 0 0.5rem;
+        padding: 0.5rem;
+        text-decoration: none;
+        background-color: #dfd9d9;
+        border-radius: 50%;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .pagination a:hover {
+        color: black;
+        background-color: #7f7f7f;
+    }
+
+    .pagination .current-page {
+        width: 2rem;
+        height: 2rem;
+        color: black;
+        background-color: #dfd9d9;
+        border: solid;
+        border-color: black;
+    }
+
+    .pagination a {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .pagination a i {
+        line-height: 1.2;
+    }
+</style>
