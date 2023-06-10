@@ -10,6 +10,7 @@ django-filter
 django-widget-tweaks
 django-templated-mail
 django-redis
+django-silk
 djoser
 djangorestframework_simplejwt
 Pillow
