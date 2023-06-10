@@ -1,23 +1,21 @@
 import django_filters
 from django_filters.rest_framework import FilterSet
-# from .models import Vendor, Product
+from .models import Vendor, Product
 
 
 class ProductViewFilter(FilterSet):
-    pass
-    # class Meta:
-    #     model = Product
-    #     fields = {
-    #         'user_id': ['exact'],
-    #         'category_id': ['exact'],
-    #         'unit_price': ['gt', 'lt']
-    #     }
+    class Meta:
+        model = Product
+        fields = {
+            'user_id': ['exact'],
+            'category_id': ['exact'],
+            'unit_price': ['gt', 'lt']
+        }
 
 
 class ProductFilter(django_filters.FilterSet):
-    pass
-    # VENDOR_CHOICES = [(vendor.id, vendor.shop_name)
-    #                   for vendor in Vendor.objects.all()]
+    VENDOR_CHOICES = [(vendor.id, vendor.shop_name)
+                      for vendor in Vendor.objects.all()]
 
     PRICE_CHOICES = [
         ('', 'Price Range'),
@@ -37,27 +35,27 @@ class ProductFilter(django_filters.FilterSet):
         ('title_desc', 'Product Title: Z to A'),
     )
 
-    # vendor = django_filters.MultipleChoiceFilter(
-    #     field_name='user__vendors__id', choices=VENDOR_CHOICES)
+    vendor = django_filters.MultipleChoiceFilter(
+        field_name='user__vendors__id', choices=VENDOR_CHOICES)
 
-    # unit_price = django_filters.MultipleChoiceFilter(
-    #     field_name='unit_price', choices=PRICE_CHOICES, method='filter_by_price_range')
+    unit_price = django_filters.MultipleChoiceFilter(
+        field_name='unit_price', choices=PRICE_CHOICES, method='filter_by_price_range')
 
-    # status = django_filters.MultipleChoiceFilter(
-    #     field_name='status', choices=Product.STATUS_CHOICES)
+    status = django_filters.MultipleChoiceFilter(
+        field_name='status', choices=Product.STATUS_CHOICES)
 
-    # title = django_filters.CharFilter(
-    #     field_name='title', lookup_expr='icontains')
+    title = django_filters.CharFilter(
+        field_name='title', lookup_expr='icontains')
 
-    # def filter_by_price_range(self, queryset, name, value):
-    #     if value[0]:
-    #         min_price, max_price = value[0].split('-')
-    #         if max_price != '':
-    #             return queryset.filter(unit_price__gte=min_price, unit_price__lte=max_price)
-    #         else:
-    #             return queryset.filter(unit_price__gte=min_price)
-    #     return queryset
+    def filter_by_price_range(self, queryset, name, value):
+        if value[0]:
+            min_price, max_price = value[0].split('-')
+            if max_price != '':
+                return queryset.filter(unit_price__gte=min_price, unit_price__lte=max_price)
+            else:
+                return queryset.filter(unit_price__gte=min_price)
+        return queryset
 
-    # class Meta:
-    #     model = Product
-    #     fields = ['vendor', 'unit_price', 'status', 'title']
+    class Meta:
+        model = Product
+        fields = ['vendor', 'unit_price', 'status', 'title']
