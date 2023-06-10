@@ -37,5 +37,5 @@ EMAIL_HOST_PASSWORD = os.environ['MAILGUN_SMTP_PASSWORD']
 DEFAULT_FROM_EMAIL = os.environ['MAILGUN_SMTP_LOGIN']
 
 STATIC_URL = '/static/'
-STATIC_ROOT = (os.path.join(BASE_DIR, 'static/files/'), )
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/files/')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'), )
