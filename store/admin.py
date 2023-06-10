@@ -91,9 +91,6 @@ class ProductAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).filter(deleted=False)
 
-    class Media:
-        js = [static('custom/js/productimage-checkbox.js')]
-
 
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
