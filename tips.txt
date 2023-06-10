@@ -317,3 +317,16 @@ Hosting options:
         b. Digital Ocean
         c. MS Azure
         d. Google Cloud
+
+Heroku Deploy:
+    1.  brew tap heroku/brew && brew install heroku
+    2. heroku --version
+    3. heroku login
+    4. heroku create deminstore-prod
+    5. heroku config:set SECRET_KEY=''
+    6. heroku config:set DJANGO_SETTINGS_MODULE=
+    7. Add Procfile to the project
+    8. heroku config:set DATABASE_URL=
+    9. pipenv install dj-database-url
+    10. git add . (stage all the modified files)
+    11. git commit -m "Provision a MySQL database"
