@@ -3,6 +3,7 @@ import dj_database_url
 
 from .common import *
 
+
 DEBUG = False
 
 SECRET_KEY = os.environ['SECRET_KEY']
