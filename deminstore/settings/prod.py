@@ -46,6 +46,11 @@ DEFAULT_FROM_EMAIL = os.environ['MAILGUN_SMTP_LOGIN']
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    BASE_DIR / "static/custom/logo",
+]
+
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
