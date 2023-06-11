@@ -343,9 +343,13 @@ def vendor(request):
             vendor = form.save(commit=False)
             vendor.user = user
             vendor.save()
-            userprofile = get_object_or_404(Userprofile, user_id=user.id)
-            userprofile.is_vendor = True
-            userprofile.save()
+            try:
+                userprofile = get_object_or_404(Userprofile, user_id=user.id)
+                userprofile.is_vendor = True
+                userprofile.save()
+            except Http404:
+                userprofile = Userprofile.objects.create(
+                    user_id=user.id, is_vendor=True)
             return redirect('mystore')
     else:
         form = VendorForm()
