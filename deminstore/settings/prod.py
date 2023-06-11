@@ -11,7 +11,13 @@ SECRET_KEY = os.environ['SECRET_KEY']
 ALLOWED_HOSTS = ['deminstore-prod.herokuapp.com']
 
 DATABASES = {
-    "default": dj_database_url.config()
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        **dj_database_url.config(),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    }
 }
 
 REDIS_URL = os.environ['REDISCLOUD_URL']
