@@ -9,7 +9,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q, F, Prefetch, Count
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.cache import cache_page
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -152,7 +151,6 @@ def category_detail(request, pk):
     return render(request, 'category_detail.html', {'category': category, 'breadcrumbs': breadcrumbs, **context})
 
 
-@cache_page(5 * 60)
 def all_categories(request):
     breadcrumbs = breadcrumb_navigation(request, 'All Categories')
     category = Category.objects.all()
